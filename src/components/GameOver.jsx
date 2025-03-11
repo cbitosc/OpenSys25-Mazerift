@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import './GameOver.css';
 
-function GameOver({ checkpoints = [], currentMapData, timeLeft }) {
+function GameOver({ checkpoints = [], currentMapData = { checkpoints: [] }, timeLeft }) {
   const [copied, setCopied] = useState(false);
-  const isWin = checkpoints?.length === currentMapData?.checkpoints?.length;
+  const totalCheckpoints = currentMapData?.checkpoints?.length || 0;
+  const isWin = checkpoints?.length === totalCheckpoints && timeLeft > 0;
 
   const formatTime = (seconds) => {
     if (typeof seconds !== 'number') return '0:00';
@@ -13,7 +14,10 @@ function GameOver({ checkpoints = [], currentMapData, timeLeft }) {
   };
 
   const generateMarkdown = () => {
-    const completionStatus = isWin ? `Completed with ${formatTime(timeLeft)} remaining` : "Incomplete - Time's up";
+    const completionStatus = isWin 
+      ? `Completed with ${formatTime(timeLeft)} remaining` 
+      : `Incomplete - ${timeLeft <= 0 ? "Time's up" : "Not all checkpoints found"}`;
+    
     const markdown = `## Maze Solutions - ${completionStatus}
 ${checkpoints.map((cp, i) => (
   `### Checkpoint ${i + 1}
@@ -33,22 +37,27 @@ ${checkpoints.map((cp, i) => (
     <div className="game-over-overlay">
       <div className="game-over-card">
         <h1 className={`game-over-title ${isWin ? 'win' : 'lose'}`}>
-          {isWin ? 'Congratulations!' : 'Time\'s Up!'}
+          {timeLeft <= 0 ? 'Time\'s Up!' : isWin ? 'Congratulations!' : 'Game Over'}
         </h1>
         
-        {isWin && (
+        {isWin ? (
           <div className="completion-message">
             <p>You've completed all checkpoints!</p>
             <span className="time-remaining">
               Time remaining: {formatTime(timeLeft)}
             </span>
           </div>
+        ) : (
+          <div className="completion-message">
+            <p>{timeLeft <= 0 ? 'You ran out of time!' : 'You haven\'t found all checkpoints yet!'}</p>
+            <p>Checkpoints found: {checkpoints.length} / {totalCheckpoints}</p>
+          </div>
         )}
 
         <div className="game-over-stats">
           <h2 className="section-heading">Challenge Results</h2>
           <p className="checkpoint-progress">
-            {checkpoints.length} / {currentMapData.checkpoints.length} checkpoints
+            {checkpoints.length} / {totalCheckpoints} checkpoints
           </p>
           <div className="checkpoints-list">
             {checkpoints.length > 0 ? (
@@ -86,18 +95,20 @@ ${checkpoints.map((cp, i) => (
           </div>
         </div>
 
-        <div className="contribution-section">
-          <h2 className="section-heading">Submit Your Solution</h2>
-          <p>Submit the answeres by creating a pull request to the repository attached to the link below!</p>
-          <a 
-            href={currentMapData.githubRepo} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="github-link"
-          >
-            Submit Solution
-          </a>
-        </div>
+        {currentMapData?.githubRepo && (
+          <div className="contribution-section">
+            <h2 className="section-heading">Submit Your Solution</h2>
+            <p>Submit the answers by creating a pull request to the repository attached to the link below!</p>
+            <a 
+              href={currentMapData.githubRepo} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="github-link"
+            >
+              Submit Solution
+            </a>
+          </div>
+        )}
 
         <div className="instagram-section">
           <h2 className="section-heading">Follow Us!</h2>

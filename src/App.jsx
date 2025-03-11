@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import GameMenu from './components/GameMenu'
 import GameWorld from './components/GameWorld'
 import GameOver from './components/GameOver'
+import { GameStateProvider } from './context/GameStateContext'
 import './App.css'
 
 function App() {
@@ -11,24 +12,6 @@ function App() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedMap, setSelectedMap] = useState(null);
-  const [timer, setTimer] = useState(600); 
-
-  useEffect(() => {
-    let interval;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setTimer(prevTimer => {
-          if (prevTimer <= 1) {
-            clearInterval(interval);
-            setIsPlaying(false);
-            return 0;
-          }
-          return prevTimer - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying]);
 
   const handleStartGame = () => {
     if (selectedMap) {
@@ -41,21 +24,19 @@ function App() {
   };
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      {!isPlaying ? (
-        timer === 0 ? (
-          <GameOver />
-        ) : (
+    <GameStateProvider>
+      <div style={{ width: "100vw", height: "100vh" }}>
+        {!isPlaying ? (
           <GameMenu 
             onStartGame={handleStartGame} 
             onMapSelect={handleMapSelect}
             selectedMap={selectedMap}
           />
-        )
-      ) : (
-        <GameWorld mapId={selectedMap} timer={timer} />
-      )}
-    </div>
+        ) : (
+          <GameWorld mapId={selectedMap} />
+        )}
+      </div>
+    </GameStateProvider>
   )
 }
 

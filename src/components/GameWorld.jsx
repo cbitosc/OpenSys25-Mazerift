@@ -6,7 +6,7 @@ import Checkpoint from '../world/Checkpoint'
 import CheckpointUI from './CheckpointUI'
 import { availableMaps } from '../config/maps'
 import LoadingScreen from './LoadingScreen'
-import { Suspense, useState, useRef, useEffect, useCallback } from 'react'
+import { Suspense, useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import AnsweredCheckpoints from './AnsweredCheckpoints';
 import Maze from '../world/Maze'
 import Skybox from '../world/Skybox';
@@ -16,73 +16,131 @@ import Timer from './Timer';
 import GameOver from './GameOver';
 import { useProgress } from '@react-three/drei'
 import GameInstructions from './GameInstructions';
-import { GameStateProvider } from '../context/GameStateContext';
+import { useGameState } from '../context/GameStateContext';
 import COSCCube from '../world/COSCCube'
 
 function GameWorld({ mapId }) {
   const { active: isLoading } = useProgress();
-  const mapConfig = availableMaps.find(map => map.id === mapId);
+  const { 
+    answeredCheckpoints, 
+    setAnsweredCheckpoints, 
+    handleCorrectAnswer,
+    gameOver,
+    setGameOver,
+    timeRemaining,
+    setTimeRemaining,
+    resetGameState,
+    setIsTimerStarted
+  } = useGameState();
+  
+  // Constants
+  const timeLimit = 600;
+  
+  // Local state
   const [isNearCheckpoint, setIsNearCheckpoint] = useState(false);
   const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
-  const [answeredCheckpoints, setAnsweredCheckpoints] = useState([]);
-  const [gameOver, setGameOver] = useState(false);
-  const [completedCheckpoints, setCompletedCheckpoints] = useState([]);
   const characterRef = useRef();
-  const timeLimit = 600; // 5 minutes in seconds
-  const [timeRemaining, setTimeRemaining] = useState(timeLimit);
 
-  const handleCorrectAnswer = (question, answer) => {
-    setAnsweredCheckpoints(prev => [...prev, { question, answer }]);
-  };
+  // Memoized map config to prevent unnecessary recalculations
+  const mapConfig = useMemo(() => {
+    const config = availableMaps.find(map => map.id === mapId);
+    if (!config) {
+      console.error(`Map with id ${mapId} not found`);
+      return availableMaps[0]; 
+    }
+    return config;
+  }, [mapId]);
 
-  const isCheckpointAnswered = (checkpoint) => {
-    return answeredCheckpoints.some(ac => ac.question === checkpoint.question);
-  };
+  // Refs to track values without causing re-renders
+  const mapConfigRef = useRef(mapConfig);
+  const answeredCheckpointsRef = useRef(answeredCheckpoints);
+  const timeRemainingRef = useRef(timeRemaining);
+  const gameOverRef = useRef(gameOver);
 
-  const handleCheckpointNear = (checkpoint) => {
+  // Update refs when values change
+  useEffect(() => {
+    mapConfigRef.current = mapConfig;
+  }, [mapConfig]);
+
+  useEffect(() => {
+    answeredCheckpointsRef.current = answeredCheckpoints;
+  }, [answeredCheckpoints]);
+
+  useEffect(() => {
+    timeRemainingRef.current = timeRemaining;
+  }, [timeRemaining]);
+
+  useEffect(() => {
+    gameOverRef.current = gameOver;
+  }, [gameOver]);
+
+  // Reset game state when map changes
+  useEffect(() => {
+    resetGameState();
+    setTimeRemaining(timeLimit);
+    
+    // Start the timer after a short delay to allow everything to initialize
+    const timerStartTimeout = setTimeout(() => {
+      setIsTimerStarted(true);
+    }, 500);
+    
+    return () => clearTimeout(timerStartTimeout);
+  }, [mapId, resetGameState, setTimeRemaining, setIsTimerStarted]);
+
+  // Check if all checkpoints are answered
+  useEffect(() => {
+    if (!gameOverRef.current && 
+        answeredCheckpointsRef.current.length > 0 && 
+        answeredCheckpointsRef.current.length === mapConfigRef.current.checkpoints.length) {
+      setGameOver(true);
+    }
+  }, [answeredCheckpoints.length, setGameOver]);
+
+  // Helper functions
+  const isCheckpointAnswered = useCallback((checkpoint) => {
+    return answeredCheckpointsRef.current.some(ac => ac.question === checkpoint.question);
+  }, []);
+
+  const handleCheckpointNear = useCallback((checkpoint) => {
     setIsNearCheckpoint(true);
     setCurrentCheckpoint(checkpoint);
-  };
+  }, []);
 
-  const handleCheckpointLeave = (checkpoint) => {
+  const handleCheckpointLeave = useCallback((checkpoint) => {
     if (currentCheckpoint?.id === checkpoint.id) {
       setIsNearCheckpoint(false);
       setCurrentCheckpoint(null);
     }
-  };
+  }, [currentCheckpoint]);
 
-  useEffect(() => {
-    if (answeredCheckpoints.length === mapConfig.checkpoints.length) {
-      setGameOver(true);
+  // Memoized handlers for Timer component
+  const handleTimeUpdate = useCallback((currentTime) => {
+    if (currentTime !== timeRemainingRef.current) {
+      setTimeRemaining(currentTime);
     }
-  }, [answeredCheckpoints, mapConfig.checkpoints]);
-
-  const handleTimeUpdate = (currentTime) => {
-    setTimeRemaining(currentTime);
-  };
+  }, [setTimeRemaining]);
 
   const handleTimeUp = useCallback(() => {
-    if (answeredCheckpoints.length < mapConfig.checkpoints.length) {
+    if (!gameOverRef.current && 
+        answeredCheckpointsRef.current.length < mapConfigRef.current.checkpoints.length) {
       setGameOver(true);
     }
-  }, [answeredCheckpoints.length, mapConfig.checkpoints.length]);
+  }, [setGameOver]);
 
+  // Check if time is up
   useEffect(() => {
     if (timeRemaining <= 0 && !gameOver) {
       handleTimeUp();
     }
   }, [timeRemaining, gameOver, handleTimeUp]);
 
-  useEffect(() => {
-    setAnsweredCheckpoints([]);
-    setTimeRemaining(timeLimit);
-    setGameOver(false);
-  }, [mapId, timeLimit]);
+  if (!mapConfig) {
+    return null;
+  }
 
   return (
-    <GameStateProvider>
+    <>
       <GameInstructions />
-      {/* <StatsPanel /> */}
       <LoadingScreen />
       <AnsweredCheckpoints checkpoints={answeredCheckpoints} />
       <CheckpointUI 
@@ -116,7 +174,7 @@ function GameWorld({ mapId }) {
                 onPlayerLeave={() => handleCheckpointLeave(checkpoint)}
                 title={checkpoint.title}
                 subtitle={checkpoint.subtitle}
-                isAnswered={answeredCheckpoints.some(ac => ac.question === checkpoint.question)}
+                isAnswered={isCheckpointAnswered(checkpoint)}
               />
             ))}
             <COSCCube position={[-6, 2, -6]} />
@@ -131,12 +189,12 @@ function GameWorld({ mapId }) {
       {gameOver && (
         <GameOver 
           checkpoints={answeredCheckpoints}
-          currentMapData={mapConfig}
+          currentMapData={mapConfigRef.current}
           timeLeft={timeRemaining}
         />
       )}
-    </GameStateProvider>
-  )
+    </>
+  );
 }
 
 export default GameWorld
