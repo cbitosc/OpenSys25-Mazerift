@@ -1,0 +1,487 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Rajdhani:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --primary: #C22C89;        /* Deep pink replacing cyan */
+  --primary-glow: rgba(194, 44, 137, 0.6);
+  --secondary: #594D9F;      /* Deep purple replacing pink */
+  --secondary-glow: rgba(89, 77, 159, 0.6);
+  --dark-bg: rgba(8, 15, 30, 0.9);
+  --card-bg: rgba(26, 23, 41, 0.9);
+  --border-light: rgba(194, 44, 137, 0.3);
+  --text-primary: #ffffff;
+  --text-secondary: #E6B3D4;  /* Light pink for secondary text */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Rajdhani", sans-serif;
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.game-menu-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto; /* Add this */
+}
+
+.menu-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.game-menu {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--dark-bg);
+  backdrop-filter: blur(10px);
+  overflow-y: auto; /* Add this */
+  padding: 2rem 0; /* Add this */
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  max-width: 800px;
+  width: 90%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
+  max-height: none; /* Remove any max-height restriction */
+  padding: 2rem 0;
+}
+
+.menu-content.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.logo-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.game-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 800;
+  color: transparent;
+  background: linear-gradient(45deg, var(--secondary), var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(194, 44, 137, 0.3);
+  letter-spacing: 0.5em;
+  text-align: center;
+  padding-left: 0.5em; /* Offset for letter-spacing */
+}
+
+.title-underline {
+  height: 2px;
+  width: 80%;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, var(--primary-glow), var(--primary), var(--primary-glow), transparent);
+  position: relative;
+  margin-top: -5px;
+}
+
+.title-underline::before {
+  content: "";
+  position: absolute;
+  height: 6px;
+  width: 40%;
+  top: -2px;
+  left: 30%;
+  background: var(--primary-glow);
+  filter: blur(4px);
+}
+
+.menu-card {
+  background: linear-gradient(
+    165deg,
+    rgba(26, 23, 41, 0.95) 0%,
+    rgba(26, 23, 41, 0.85) 100%
+  );
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  overflow-y: visible; /* Change from auto to visible */
+  max-height: none; /* Remove max-height restriction */
+}
+
+.menu-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.menu-card::-webkit-scrollbar-track {
+  background: rgba(8, 15, 30, 0.4);
+  border-radius: 4px;
+}
+
+.menu-card::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.menu-card::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card-header h2 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 3px;
+}
+
+.tech-line {
+  height: 1px;
+  flex-grow: 1;
+  background: linear-gradient(90deg, transparent, var(--primary-glow), transparent);
+  position: relative;
+}
+
+.map-selection {
+  margin-bottom: 2.5rem;
+  background: linear-gradient(
+    to bottom right,
+    rgba(8, 15, 30, 0.6),
+    rgba(8, 15, 30, 0.4)
+  );
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.selection-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.selection-label h3 {
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+}
+
+.custom-select {
+  position: relative;
+  width: 100%;
+}
+
+.dimension-select {
+  width: 100%;
+  padding: 1rem 2.5rem 1rem 1.5rem;
+  font-size: 1rem;
+  background: rgba(8, 20, 40, 0.8);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  outline: none;
+}
+
+.dimension-select:hover,
+.dimension-select:focus {
+  border-color: var(--primary);
+  /* Removed box-shadow property */
+}
+
+.select-arrow {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--primary);
+  pointer-events: none;
+}
+
+.play-button {
+  position: relative;
+  padding: 1.2rem 3.5rem;
+  font-size: 1.4rem;
+  background: linear-gradient(45deg, var(--secondary), var(--primary));
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.play-button.disabled {
+  background: linear-gradient(45deg, #2a2a3a, #3a3a4a);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.play-button:hover:not(.disabled) {
+  transform: translateY(-3px) scale(1.02);
+}
+
+.button-text {
+  position: relative;
+  z-index: 2;
+}
+
+.button-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.play-button:hover:not(.disabled) .button-border {
+  opacity: 1;
+  animation: borderPulse 2s infinite;
+}
+
+.button-glow {
+  display: none;
+}
+
+/* Remove these CSS classes completely */
+.tech-corners .corner {
+  display: none;
+}
+
+.corner.top-left,
+.corner.top-right,
+.corner.bottom-left,
+.corner.bottom-right {
+  display: none;
+}
+
+/* Remove these classes completely */
+.ambient-particles,
+.particle {
+  display: none;
+}
+
+@keyframes float {
+  display: none;
+}
+
+.menu-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.menu-footer p {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.logos-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.logo-img {
+  height: 60px;
+  width: auto;
+}
+
+.presents-text {
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  letter-spacing: 0.5em;
+  text-align: center;
+  margin: 1rem 0;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.password-section {
+  margin-bottom: 2.5rem;
+  background: linear-gradient(
+    to bottom right,
+    rgba(8, 15, 30, 0.6),
+    rgba(8, 15, 30, 0.4)
+  );
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.password-input-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.password-input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  background: rgba(8, 20, 40, 0.8);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  font-family: "Rajdhani", sans-serif;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.password-input:focus {
+  border-color: var(--primary);
+}
+
+.validate-button {
+  padding: 0 1.5rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  background: linear-gradient(45deg, var(--secondary), var(--primary));
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.password-error {
+  color: #ff4757;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+}
+
+.clear-progress-button {
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  background: rgba(194, 44, 44, 0.2);
+  border: 1px solid rgba(194, 44, 44, 0.5);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.clear-progress-button:hover {
+  background: rgba(194, 44, 44, 0.3);
+  border-color: rgba(194, 44, 44, 0.7);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-title {
+    font-size: 3.5rem;
+    letter-spacing: 0.3em;
+  }
+
+  .menu-card {
+    padding: 1.5rem;
+  }
+
+  .play-button {
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+  }
+
+  .logo-img {
+    height: 40px;
+  }
+
+  .presents-text {
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+  }
+
+  .game-menu-container {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .menu-content {
+    padding: 1rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 2.5rem;
+    letter-spacing: 0.2em;
+  }
+
+  .card-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .selection-label h3 {
+    font-size: 0.9rem;
+  }
+
+  .play-button {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+  }
+}
+

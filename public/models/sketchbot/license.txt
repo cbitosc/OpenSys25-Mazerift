@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sketchbot
+* source:	https://sketchfab.com/3d-models/sketchbot-37c871cbd9174f67bda4c10d19a97ed0
+* author:	e-toma (https://sketchfab.com/e-toma)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sketchbot" (https://sketchfab.com/3d-models/sketchbot-37c871cbd9174f67bda4c10d19a97ed0) by e-toma (https://sketchfab.com/e-toma) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

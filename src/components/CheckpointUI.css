@@ -1,0 +1,234 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+}
+
+.checkpoint-container {
+    position: fixed;
+    width: 90%;
+    max-width: 800px;
+    z-index: 1000;
+}
+
+.checkpoint-button {
+    position: fixed;
+    bottom: 40px;  /* Distance from bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    background: rgba(20, 20, 35, 0.9);
+    border: 2px solid #483d8b; /* darkslateblue */
+    color: #9370db; /* mediumpurple */
+    font-family: 'Monaco', monospace;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s;
+    border-radius: 3px;
+    z-index: 1000;
+    min-width: 200px;
+    text-align: center;
+}
+
+.checkpoint-button:hover {
+    background: rgba(72, 61, 139, 0.2);
+    box-shadow: 0 0 20px rgba(147, 112, 219, 0.3);
+}
+
+.button-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(147, 112, 219, 0.15),
+        transparent
+    );
+    animation: button-glow 3s infinite;
+}
+
+.checkpoint-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(10, 0, 29, 0.85); /* More transparent background */
+    opacity: 10;
+    backdrop-filter: blur(8px); /* Add blur effect */
+    -webkit-backdrop-filter: blur(8px); /* For Safari */
+    border: 2px solid rgba(72, 61, 139, 0.6);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 
+        0 0 20px rgba(72, 61, 139, 0.3),
+        inset 0 0 20px rgba(72, 61, 139, 0.1); /* Inner glow */
+}
+
+.panel-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.checkpoint-title {
+    font-size: 2.5rem;
+    color: rgba(147, 112, 219, 1); /* Fully opaque text */
+    text-transform: uppercase;
+    margin: 1rem 0;
+    text-shadow: 0 0 15px rgba(147, 112, 219, 0.5); /* Enhanced glow for readability */
+}
+
+.question-text {
+    font-size: 1.8rem;
+    color: rgba(255, 255, 255, 0.9); /* Slightly transparent text */
+    text-align: center;
+    margin: 2rem 0;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.sci-fi-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    background: rgba(72, 61, 139, 0.15);
+    backdrop-filter: blur(4px);
+    border: 1px solid #483d8b;
+    color: white;
+    margin: 1rem 0;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.sci-fi-button {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    min-width: 150px;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #0ff;
+}
+
+.header-decoration {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #483d8b, transparent);
+}
+
+.panel-header h3 {
+    margin: 0 15px;
+    font-family: 'Monaco', monospace;
+    text-align: center;
+}
+
+.sci-fi-input {
+    width: 100%;
+    padding: 10px;
+    background: rgba(72, 61, 139, 0.1);
+    border: 1px solid #483d8b;
+    color: #fff;
+    font-family: 'Monaco', monospace;
+    margin-bottom: 15px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.sci-fi-button {
+    padding: 10px 20px;
+    border: 1px solid;
+    color: #fff;
+    font-family: 'Monaco', monospace;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.submit {
+    background: rgba(72, 61, 139, 0.2);
+    border-color: #483d8b;
+}
+
+.cancel {
+    background: rgba(139, 61, 72, 0.2);
+    border-color: #8b3d47;
+}
+
+.error-message {
+    color: #f00;
+    text-align: center;
+    margin-top: 10px;
+    font-family: 'Monaco', monospace;
+    animation: error-flash 0.5s;
+}
+
+.letter-input-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.letter-input {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #0ff;
+    border-radius: 4px;
+    color: #0ff;
+    font-family: 'Monaco', monospace;
+    font-size: 24px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.letter-input:focus {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    outline: none;
+}
+
+.letter-input:hover {
+    border-color: #fff;
+}
+
+@keyframes button-glow {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes panel-appear {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes error-flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
